@@ -1,4 +1,4 @@
-const { getAllHomes, createHome } = require('../managers/houseManager');
+const { getAllHomes, createHome, getHomeById } = require('../managers/houseManager');
 const { mustBeAuth } = require('../middlewares/authMiddleware');
 const { getErrorMessage } = require('../utils/errorHelper');
 
@@ -34,6 +34,25 @@ router.post('/create',mustBeAuth,async(req,res)=>{
     }catch(err){
         const error = getErrorMessage(err);
         res.status(400).render('houses/create',{error,name,type,year,city,homeImage,description,availablePieces});
+    }
+});
+
+router.get('/:homeId/details',async(req,res)=>{
+    try{
+        const homeId = req.params.homeId;
+        const home = await getHomeById(homeId).lean();
+        if(!home){
+            throw new Error("Invalid home!");
+        }
+        const isLogged = req.user?._id;
+        const isOwner = home.owner == isLogged;
+        const rentedHome = home.rentedHome.map(h=>h.name).join(', ');
+        const hasRentals = home.rentedHome.length>0;
+        const availablePieces = home.availablePieces
+        const hasAvailablePeaces = availablePieces>0;
+        res.status(302).render('houses/details',{home,isLogged,isOwner,rentedHome,availablePieces,hasAvailablePeaces,hasRentals});    
+    }catch(err){
+        res.status(404).render('404');
     }
 });
 

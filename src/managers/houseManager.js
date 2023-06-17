@@ -19,7 +19,12 @@ function createHome(name,type,year,city,homeImage,description,availablePieces,ow
     return House.create(home);
 }
 
+function getHomeById(homeId){
+    return House.findById(homeId).populate('rentedHome');
+}
+
 module.exports ={
     getAllHomes,
     createHome,
+    getHomeById,
 }
