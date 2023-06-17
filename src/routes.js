@@ -8,8 +8,8 @@ router.use(homeController);
 router.use(userController);
 router.use('/houses',houseController);
 
-router.get('*',(req,res)=>{
+router.all('*',(req,res)=>{
     res.status(404).render('404');
-})
+});
 
 module.exports = router;
