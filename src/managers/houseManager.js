@@ -27,9 +27,24 @@ function deleteHomeById(homeId){
     return House.findByIdAndDelete(homeId);
 }
 
+function editHomeById(homeId,name,type,year,city,homeImage,description,availablePieces){
+    const home ={
+        name,
+        type,
+        year,
+        city,
+        homeImage,
+        description,
+        availablePieces,
+    };
+
+    return House.findByIdAndUpdate(homeId,home,{runValidators:true});
+}
+
 module.exports ={
     getAllHomes,
     createHome,
     getHomeById,
     deleteHomeById,
+    editHomeById,
 }

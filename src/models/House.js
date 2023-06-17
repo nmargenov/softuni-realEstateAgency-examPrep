@@ -10,8 +10,8 @@ const houseSchema = new mongoose.Schema({
     type:{
         type:String,
         enum:{
-            values:['Apartament','Villa','House'],
-            message:"Invalid housing type! 'Apartament', 'Villa' and 'House' are only acceptable!"
+            values:['Apartment','Villa','House'],
+            message:"Invalid housing type! 'Apartment', 'Villa' and 'House' are only acceptable!"
         },
     },
     year:{
