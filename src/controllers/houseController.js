@@ -1,4 +1,4 @@
-const { getAllHomes, createHome, getHomeById } = require('../managers/houseManager');
+const { getAllHomes, createHome, getHomeById, deleteHomeById } = require('../managers/houseManager');
 const { mustBeAuth } = require('../middlewares/authMiddleware');
 const { getErrorMessage } = require('../utils/errorHelper');
 
@@ -56,4 +56,18 @@ router.get('/:homeId/details',async(req,res)=>{
     }
 });
 
+router.get('/:homeId/delete',mustBeAuth,async(req,res)=>{
+    try{
+        const homeId = req.params.homeId;
+        const home = await getHomeById(homeId);
+        const loggedUser = req.user._id;
+        if(home.owner !=loggedUser){
+            throw new Error('Access denied!');
+        }
+        await deleteHomeById(homeId);
+        res.redirect('/houses/catalog');
+    }catch(err){
+        res.status(404).render('404');
+    }
+});
 module.exports = router;

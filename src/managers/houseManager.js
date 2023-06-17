@@ -23,8 +23,13 @@ function getHomeById(homeId){
     return House.findById(homeId).populate('rentedHome');
 }
 
+function deleteHomeById(homeId){
+    return House.findByIdAndDelete(homeId);
+}
+
 module.exports ={
     getAllHomes,
     createHome,
     getHomeById,
+    deleteHomeById,
 }
