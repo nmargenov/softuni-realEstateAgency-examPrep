@@ -20,22 +20,17 @@ async function login(username,password){
     const payload = {
         _id:user._id,
         username:user.username,
-        email:user.email
+        name:user.name
     }
     
     const token = await sign(payload,SECRET,{expiresIn:'2d'});
     return token;
 }
 
-async function register(username,email,password,rePassword){
+async function register(username,name,password,rePassword){
     const existingUsername = await User.findOne({username});
     if(existingUsername){
         throw new Error("Username is already in use!");
-    }
-
-    const existingEmail = await User.findOne({email});
-    if(existingEmail){
-        throw new Error("Email is already in use!");
     }
 
     if(password.length<4){
@@ -50,7 +45,7 @@ async function register(username,email,password,rePassword){
 
     const user = {
         username,
-        email,
+        name,
         password:hashPass
     }
 
@@ -59,7 +54,7 @@ async function register(username,email,password,rePassword){
     const payload = {
         _id:newUser._id,
         username:newUser.username,
-        email:newUser.email
+        name:newUser.name
     }
 
     const token = await sign(payload,SECRET,{expiresIn:'2d'});

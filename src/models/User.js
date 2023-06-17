@@ -1,15 +1,22 @@
 const mongoose = require('mongoose');
 
+const nameRegex = /^[A-Za-z]+ [A-Za-z]+$/;
+
 const userSchema = new mongoose.Schema({
     username:{
         type:String,
         required:[true,'Username is required!'],
-        minLength:[2,'Username must be atleast 2 characters long!']
+        minLength:[5,'Username must be atleast 5 characters long!']
     },
-    email:{
+    name:{
         type:String,
-        required:[true,'Email is required!'],
-        minLength:[10,'Email must be atleast 10 characters long!']
+        required:[true,'Name is required!'],
+        validate: {
+            validator: function(value) {
+              return nameRegex.test(value);
+            },
+            message: 'Invalid name format! Please provide a valid firstname lastname.'
+          }
     },
     password:{
         type:String,
