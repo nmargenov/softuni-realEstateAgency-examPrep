@@ -132,4 +132,20 @@ router.get('/:homeId/rent', mustBeAuth, async (req, res) => {
         res.status(404).render('404');
     }
 });
+
+router.get('/search',mustBeAuth,async(req,res)=>{
+    try{
+        const search = req.query.search;
+        const searchToLower = search?.trim().toLowerCase();
+
+        let homes = await getAllHomes().lean();
+        if(search){
+            homes = homes.filter(h=>h.type.toLowerCase().includes(searchToLower));
+        }
+        const hasHomes = homes.length>0;
+        res.status(302).render('houses/search',{homes,hasHomes,search});
+    }catch(err){
+        res.status(404).render('404');
+    }
+});
 module.exports = router;

@@ -1,0 +1,26 @@
+<main>
+    <form class="search" action="" method="">
+        <input type="search" name="search" value="{{search}}" placeholder="Search here...">
+        <button type="submit">Search</button>
+    </form>
+    <section id="find-section">
+
+        <!-- If there are any matching matches from the search, show each of them -->
+        {{#if hasHomes}}
+        {{#each homes}}
+        <div class="card">
+            <h3>{{name}}</h3>
+            <p>{{description}}</p>
+            <div class="cta-container"><a href="/houses/{{_id}}/details" class="det-link">Details</a></div>
+            <div class="card_circle"><img src="{{homeImage}}"></div>
+        </div>
+        {{/each}}
+
+        <!-- If there are no search matches, show: -->
+        {{else}}
+        <div class="no-data-listing">
+            <p class="no-offer">No match was found for the submitted type...</p>
+        </div>
+        {{/if}}
+    </section>
+</main>
