@@ -53,6 +53,10 @@ function checkIfUserAlreadyRented(home,userId){
     return home.rentedHome.map(h=>h._id.toString()).includes(userId);
 }
 
+function getLatestThreeHomes(){
+    return House.find().sort({createdAt:-1}).limit(3);
+}
+
 module.exports ={
     getAllHomes,
     createHome,
@@ -61,4 +65,5 @@ module.exports ={
     editHomeById,
     rentHome,
     checkIfUserAlreadyRented,
+    getLatestThreeHomes,
 }
