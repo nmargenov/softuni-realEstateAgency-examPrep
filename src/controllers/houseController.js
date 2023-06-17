@@ -1,4 +1,4 @@
-const { getAllHomes, createHome, getHomeById, deleteHomeById, editHomeById } = require('../managers/houseManager');
+const { getAllHomes, createHome, getHomeById, deleteHomeById, editHomeById, rentHome, checkIfUserAlreadyRented } = require('../managers/houseManager');
 const { mustBeAuth } = require('../middlewares/authMiddleware');
 const { getErrorMessage } = require('../utils/errorHelper');
 
@@ -46,11 +46,15 @@ router.get('/:homeId/details', async (req, res) => {
         }
         const isLogged = req.user?._id;
         const isOwner = home.owner == isLogged;
+
         const rentedHome = home.rentedHome.map(h => h.name).join(', ');
         const hasRentals = home.rentedHome.length > 0;
+
         const availablePieces = home.availablePieces
-        const hasAvailablePeaces = availablePieces > 0;
-        res.status(302).render('houses/details', { home, isLogged, isOwner, rentedHome, availablePieces, hasAvailablePeaces, hasRentals });
+        const hasAvailablePieces = availablePieces > 0;
+
+        const hasRented = isLogged && checkIfUserAlreadyRented(home,isLogged);
+        res.status(302).render('houses/details', { home, isLogged, isOwner, rentedHome, availablePieces, hasAvailablePieces, hasRentals, hasRented });
     } catch (err) {
         res.status(404).render('404');
     }
@@ -108,6 +112,24 @@ router.post('/:homeId/edit',mustBeAuth,async (req,res)=>{
     }catch(err){
         const error = getErrorMessage(err);
         res.status(400).render('houses/edit',{error,home});
+    }
+});
+
+router.get('/:homeId/rent', mustBeAuth, async (req, res) => {
+    try {
+        const homeId = req.params.homeId;
+        const home = await getHomeById(homeId).lean();
+        const loggedUser = req.user._id;
+        if (!home || home.owner == loggedUser) {
+            throw new Error('Access denied!');
+        }
+        if(home.availablePieces<=0){
+            throw new Error("No available pieces!");
+        }
+        await rentHome(home,homeId,loggedUser);
+        res.redirect(`/houses/${homeId}/details`);
+    } catch (err) {
+        res.status(404).render('404');
     }
 });
 module.exports = router;
